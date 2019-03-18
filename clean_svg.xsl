@@ -9,9 +9,9 @@
 
 	<xsl:strip-space elements="*"/>
 
-
 	<xsl:mode name="copy" on-no-match="deep-copy"/>
 
+	<!-- the inkscape resolution varies depending on the version -->
 	<xsl:param name="inkscape-default-resolution" as="xs:string"
 		select="
 			if (//@inkscape:version[contains(., '0.92')]) then
@@ -21,6 +21,7 @@
 
 	<xsl:output method="xml" indent="yes"/>
 
+	<!-- function for unit conversion -->
 	<xsl:function name="f:convertUnit" as="xs:decimal">
 		<xsl:param name="in-value" as="xs:decimal"/>
 		<xsl:param name="in-unit" as="xs:string"/>
@@ -55,8 +56,7 @@
 		</xsl:choose>
 	</xsl:function>
 
-
-
+	<!-- variable created to remove unused markers from defs -->
 	<xsl:variable name="links-to-marker" as="xs:string*">
 		<!--    does not parse marker styles since they do not point to markers    -->
 
@@ -65,7 +65,7 @@
 			select="//*[not(ancestor-or-self::marker)]/tokenize(@style, ';')[contains(., 'marker-')]"/>
 
 		<!-- find references to markers in marker-end or marker-start attributes
-        this is to remain compatible with files that have been cleaned by a previous version of the cleaner that separated the style attribute -->
+        	this is to remain compatible with files that have been cleaned by a previous version of the cleaner that separated the style attribute -->
 		<xsl:variable name="marker_in_att" as="item()*"
 			select="//*[not(ancestor-or-self::marker)]/@*[contains(name(), 'marker-')]"/>
 
@@ -74,6 +74,7 @@
 		</xsl:for-each>
 	</xsl:variable>
 
+	<!-- variable created to remove unused gradients from defs -->
 	<xsl:variable name="links-to-gradient" as="xs:string*">
 		<!--    does not parse gradient styles since they do not point to gradients    -->
 
@@ -94,6 +95,7 @@
 		</xsl:for-each>
 	</xsl:variable>
 
+	<!-- template to ignore files that are not svg -->
 	<xsl:template match="/">
 		<xsl:choose>
 			<xsl:when test="svg">
@@ -104,10 +106,9 @@
 			</xsl:otherwise>
 		</xsl:choose>
 	</xsl:template>
-
+	
+	<!-- start -->
 	<xsl:template match="svg">
-		<!-- for debug -->
-		<!-- <xsl:message select="$links-to-marker"></xsl:message> -->
 		<svg xmlns="http://www.w3.org/2000/svg">
 			<xsl:call-template name="svg-namespaces"/>
 			<xsl:if test="not(@viewBox)">
@@ -116,40 +117,24 @@
 			<xsl:apply-templates select="@* | *"/>
 		</svg>
 	</xsl:template>
-
-	<xsl:template match="flowRoot"/>
-
+	
+	
+	<!-- identity transform -->
 	<xsl:template match="@* | node()">
 		<xsl:copy copy-namespaces="no">
 			<xsl:apply-templates select="@* | node()"/>
 		</xsl:copy>
 	</xsl:template>
 
+	<!-- filter elements with non-approved namespaces -->
 	<xsl:template
 		match="*[namespace-uri() != 'http://www.w3.org/2000/svg' and namespace-uri() != 'http://www.w3.org/1999/xlink'] | @*[contains(name(), ':') and not(starts-with(name(), 'xlink:')) and not(starts-with(name(), 'xml:')) and not(starts-with(name(), 'sodipodi:role')) and not(starts-with(name(), 'inkscape:version'))] | *[local-name() = 'script']"/>
-
-
-	<xsl:template match="text[not(normalize-space(.))]"/>
-    
-    <!-- remove Illustrator styles -->
-    <xsl:template match="style"/>
-    <xsl:template match="@class"/>
 	
-	<!-- remove empty paths -->
-	<xsl:template match="path[@d[not(normalize-space(.))]]"/>
-
-
-	<!-- remove unused markers -->
-	<xsl:template match="marker[not(@id = $links-to-marker)]"/>
-	
-	<!-- remove unused gradients -->
-
-	<xsl:template match="linearGradient[not(@id = $links-to-gradient)]"/>
-
-	<xsl:template match="radialGradient[not(@id = $links-to-gradient)]"/>
-
+	<!-- remove style attributes that contain '-inkscape-' -->
 	<xsl:template match="@style">
+		<!-- step one: tokenize style attribute -->
 		<xsl:variable name="style-list" select="tokenize(., ';')" as="item()*"/>
+		<!-- step two: filter the content, correct the colors -->
 		<xsl:variable name="style-list-improved" as="item()*">
 			<xsl:for-each select="$style-list">
 				<xsl:choose>
@@ -164,11 +149,13 @@
 				</xsl:choose>
 			</xsl:for-each>
 		</xsl:variable>
+		<!-- step three: concatenate the list again -->
 		<xsl:attribute name="style">
 			<xsl:value-of select="$style-list-improved" separator=";"/>
 		</xsl:attribute>
 	</xsl:template>
 
+	<!-- add sodipodi:role="line" to all tspan elements -->
 	<xsl:template match="tspan">
 		<xsl:copy copy-namespaces="no">
 			<xsl:if test="not(@sodipodi:role)">
@@ -179,7 +166,8 @@
 			<xsl:apply-templates select="@* | node()"/>
 		</xsl:copy>
 	</xsl:template>
-
+	
+	<!-- add namespaces -->
 	<xsl:template name="svg-namespaces">
 		<xsl:namespace name="sodipodi" select="'http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd'"/>
 		<xsl:namespace name="inkscape" select="'http://www.inkscape.org/namespaces/inkscape'"/>
@@ -188,15 +176,14 @@
 		</xsl:if>
 	</xsl:template>
 
+	<!-- generate viewBox content -->
 	<xsl:template name="create_viewBox">
-
 		<xsl:variable name="width-px">
 			<xsl:apply-templates select="@width" mode="calculate-dim"/>
 		</xsl:variable>
 		<xsl:variable name="height-px">
 			<xsl:apply-templates select="@height" mode="calculate-dim"/>
 		</xsl:variable>
-
 		<xsl:attribute name="viewBox">
 			<xsl:text>0 0 </xsl:text>
 			<xsl:value-of select="$width-px"/>
@@ -206,7 +193,7 @@
 
 	</xsl:template>
 
-
+	<!-- convert width and height to pixel for the viewBox -->
 	<xsl:template match="@width | @height" mode="calculate-dim">
 		<xsl:choose>
 			<xsl:when test=". castable as xs:decimal">
@@ -223,4 +210,26 @@
 			</xsl:otherwise>
 		</xsl:choose>
 	</xsl:template>
+	
+	<!-- remove flowRoot -->
+	<xsl:template match="flowRoot"/>
+
+
+	<!-- remove empty text blocks -->
+	<xsl:template match="text[not(normalize-space(.))]"/>
+    
+   	 <!-- remove Illustrator styles -->
+    	<xsl:template match="style"/>
+    	<xsl:template match="@class"/>
+	
+	<!-- remove empty paths -->
+	<xsl:template match="path[@d[not(normalize-space(.))]]"/>
+
+	<!-- remove unused markers -->
+	<xsl:template match="marker[not(@id = $links-to-marker)]"/>
+	
+	<!-- remove unused gradients -->
+	<xsl:template match="linearGradient[not(@id = $links-to-gradient)]"/>
+	<xsl:template match="radialGradient[not(@id = $links-to-gradient)]"/>
+	
 </xsl:stylesheet>
