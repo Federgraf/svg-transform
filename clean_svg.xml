@@ -15,7 +15,7 @@
 -->
 <refactoringOperationDescriptor xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xmlns="http://www.oxygenxml.com/ns/xmlRefactoring" id="op_jsg_ptdvsy" name="Clean SVG">
-    <description>Remove all unnecessary crap from SVG</description>
+    <description>Remove all unnecessary elements from SVG</description>
     <script type="XSLT" href="clean_svg.xsl"/>
 
 </refactoringOperationDescriptor>
