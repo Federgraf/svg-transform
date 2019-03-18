@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<refactoringOperationDescriptor 
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns="http://www.oxygenxml.com/ns/xmlRefactoring" id="op_ff3_j3n_j1b" name="Resize svg">
+    <description>Refactoring operation to resize an svg image.</description>    
+    <script type="XSLT" href="resize_svg.xsl"/>
+    <parameters>
+        <description>Input a new width or height in the unit of your choice. By default the svg will keep the original unit.
+        Select "enforce" to perform a resizing with unit conversion (using the chosen resolution). Leave the value empty for a simple conversion.</description>
+        <parameter label="Dimension" name="dimension" type="TEXT_CHOICE" optional="false">   
+            <description>Choose a dimension</description>
+            <possibleValues>
+                <value name="width">width</value>
+                <value name="height">height</value>
+            </possibleValues>
+        </parameter>
+        <parameter label="Value" name="value" type="TEXT" optional="true">   
+            <description>Input a value.</description>
+        	<possibleValues>
+        		<value name="50">50</value>
+                <value name="100">100</value>
+                <value name="200">200</value>
+                <value name="300">300</value>
+                <value name="400">400</value>
+            </possibleValues>
+        </parameter>
+        <parameter label="Unit" name="unit" type="TEXT_CHOICE" optional="false">   
+            <description>Choose a unit</description>
+            <possibleValues>
+                <value name="mm">mm</value>
+                <value name="px">px</value>
+            	<value name="cm">cm</value>
+            	<value name="percentage">%</value>
+            </possibleValues>
+        </parameter>
+        <parameter type="TEXT_CHOICE" name="resolution" label="Resolution">
+            <description>Enter the desired ouput resolution in dots per inch (dpi). The resolution will be used to convert pixels into a metric dimension.</description>
+            <possibleValues>
+                <value name="90">90 (Inkscape)</value>
+                <value name="120" default="true">120 (Oxygen pdf / computer screen)</value>
+                <value name="300">300 (print)</value>
+            </possibleValues>
+        </parameter>
+        <parameter type="BOOLEAN" name="enforce" label="Enforce Unit">
+            <description>Check to convert the svg to the input unit.</description>
+        </parameter>
+        <parameter type="BOOLEAN" name="redim-text" label="Resize images with text">
+            <description>Check to include images that contain text.</description>
+        </parameter>
+    </parameters>
+</refactoringOperationDescriptor>
