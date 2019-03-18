@@ -14,14 +14,14 @@
     
     <xsl:mode name="redim" on-no-match="shallow-copy"/>
 
-   <!-- paramètres à définir par l'utilisateur -->
+   <!-- user-defined parameters -->
     <xsl:param name="dimension"/>
     <xsl:param name="value"/>
     <xsl:param name="unit"/>
     <xsl:param name="resolution" as="xs:string"/>
     <xsl:param name="enforce" as="xs:boolean"/>
 
-    <!-- facteur de conversion inkscape mm to px-->
+    <!-- conversion factor for inkscape, from mm to px -->
     <xsl:param name="mmToPx" select="xs:decimal($resolution) div 25.4" as="xs:decimal"/>
 
     <!-- dimension correspondant à celle choisie par l'utilisateur -->
@@ -47,11 +47,11 @@
 
     <xd:doc>
         <xd:desc>
-            <xd:p>génère les attributs @height et @width</xd:p>
+            <xd:p>generates @height and @width</xd:p>
         </xd:desc>
     </xd:doc>
     <xsl:template match="svg/@width | svg/@height" mode="redim">
-        <!-- si la dimension contient des lettres, charger les deux derniers caractères dans la variable (px si vide)-->
+        <!-- if the attribute contains letters, load the two last characters in the variable (px if empty)-->
         <xsl:variable name="original_unit">
             <xsl:choose>
                 <xsl:when test="not(. castable as xs:decimal)">
@@ -63,7 +63,7 @@
             </xsl:choose>
         </xsl:variable>
 
-        <!-- récupère la valeur de la dimension correspondant à celle choisie par l'utilisateur sans l'unité -->
+        <!-- gets the value of the dimension matching the one chosen by the user, without the unit -->
         <xsl:variable name="matching_value" as="xs:decimal"
             select="
                 if ($matching_dimension castable as xs:decimal) then
@@ -72,7 +72,7 @@
                     xs:decimal(substring-before($matching_dimension, $original_unit))"/>
 
 
-        <!-- récupère la valeur de la dimension actuelle sans l'unité -->
+        <!-- gets the current dimension value without the unit -->
         <xsl:variable name="original_value"
             select="
                 if (. castable as xs:decimal) then
