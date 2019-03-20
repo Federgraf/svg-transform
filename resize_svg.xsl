@@ -24,7 +24,7 @@
     <!-- conversion factor for inkscape, from mm to px -->
     <xsl:param name="mmToPx" select="xs:decimal($resolution) div 25.4" as="xs:decimal"/>
 
-    <!-- dimension correspondant à celle choisie par l'utilisateur -->
+    <!-- dimension that matches the one chosen by the user -->
     <xsl:variable name="matching_dimension" select="svg/@*[name() = $dimension]"/>
 
     <xd:doc>
