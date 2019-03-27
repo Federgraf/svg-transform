@@ -10,6 +10,9 @@
 	<xsl:strip-space elements="*"/>
 
 	<xsl:mode name="copy" on-no-match="deep-copy"/>
+	
+	<!-- this parameter is defined through the resize svg menu but it is used during the cleaning phase -->
+	<xsl:param name="stroke"/>
 
 	<!-- the inkscape resolution varies depending on the version -->
 	<xsl:param name="inkscape-default-resolution" as="xs:string"
@@ -142,6 +145,10 @@
 					<xsl:when test="starts-with(., 'stroke:url') or contains(.,'stroke:#000020')">
 							<xsl:copy-of select="'stroke:#000000'"/>						
 					</xsl:when>
+					<!-- a stroke width can be specified in the resize menu -->
+					<xsl:when test="starts-with(., 'stroke-width') and $stroke">
+				        	<xsl:copy-of select="concat('stroke-width:',$stroke)"/>	
+				    	</xsl:when>
 					<xsl:when test="starts-with(., '-inkscape-')"/>
 					<xsl:otherwise>
 							<xsl:copy-of select="."/>						
