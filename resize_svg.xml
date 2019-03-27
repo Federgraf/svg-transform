@@ -6,7 +6,7 @@
     <description>Refactoring operation to resize an svg image.</description>    
     <script type="XSLT" href="resize_svg.xsl"/>
     <parameters>
-        <description>Input a new width or height in the unit of your choice. By default the svg will keep the original unit.
+        <description>Input a new width or height in the unit of your choice. By default the svg will keep the original unit. Input a stroke width to set all the strokes to a specific width.
         Select "enforce" to perform a resizing with unit conversion (using the chosen resolution). Leave the value empty for a simple conversion.</description>
         <parameter label="Dimension" name="dimension" type="TEXT_CHOICE" optional="false">   
             <description>Choose a dimension</description>
@@ -33,6 +33,9 @@
             	<value name="cm">cm</value>
             	<value name="percentage">%</value>
             </possibleValues>
+        </parameter>
+        <parameter label="Stroke width" name="stroke" type="TEXT" optional="true">   
+            <description>Input a stroke width in pixels.</description>
         </parameter>
         <parameter type="TEXT_CHOICE" name="resolution" label="Resolution">
             <description>Enter the desired ouput resolution in dots per inch (dpi). The resolution will be used to convert pixels into a metric dimension.</description>
