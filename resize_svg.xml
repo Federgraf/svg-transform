@@ -35,7 +35,7 @@
             </possibleValues>
         </parameter>
         <parameter label="Stroke width" name="stroke" type="TEXT" optional="true">   
-            <description>Input a stroke width in pixels.</description>
+            <description>Input a stroke width in mm.</description>
         </parameter>
         <parameter type="TEXT_CHOICE" name="resolution" label="Resolution">
             <description>Enter the desired ouput resolution in dots per inch (dpi). The resolution will be used to convert pixels into a metric dimension.</description>
